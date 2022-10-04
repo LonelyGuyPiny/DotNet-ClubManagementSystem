@@ -5,14 +5,16 @@ Club Management System helps users manage martial art clubs. It tracks member ac
 
 ![CMS Preview](https://github.com/TheDayIsMyEnemy/ClubManagementSystem/blob/main/screenshots/dashboard.png)
 
-## Technologies
-- Blazor Server
-- Microsoft SQL Server
-- Entity Framework Core
-- ASP.NET Core Identity
-- MudBlazor 
+## Built With
+
+- [.NET 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+- [Blazor Server](https://learn.microsoft.com/en-us/aspnet/core/blazor/?view=aspnetcore-6.0#blazor-server)
+- [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core)
+- [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
+- [MudBlazor](https://mudblazor.com)
 
 ## Features
+
 - Manage memberships
 - Member groups
 - Upload members CSV file
@@ -23,7 +25,12 @@ Club Management System helps users manage martial art clubs. It tracks member ac
 - Dark Theme
 - Other awesome features yet to be implemented
 
-## Setup
+## Installation
+
+1. [Download and install the .NET Core SDK](https://dotnet.microsoft.com/download)
+2. [Download and install SQL Server](https://go.microsoft.com/fwlink/p/?linkid=866662)
+
+## How to run locally
 1. Ensure the tool EF was already installed. You can find some help [here](https://docs.microsoft.com/ef/core/miscellaneous/cli/dotnet)
 
     ```
@@ -37,7 +44,7 @@ Club Management System helps users manage martial art clubs. It tracks member ac
     dotnet ef migrations add Initial --output-dir ./Data/Migrations
     ```
 
-  - This command will update/create the database to the last migrations.
+  - This command will update/create the database to the latest migration.
     ```
     dotnet ef database update 
     ```  
