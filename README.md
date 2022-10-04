@@ -8,6 +8,7 @@ Club Management System helps users manage martial art clubs. It tracks member ac
 ## Technologies
 - Blazor Server
 - Microsoft SQL Server
+- Entity Framework Core
 - ASP.NET Core Identity
 - MudBlazor 
 
