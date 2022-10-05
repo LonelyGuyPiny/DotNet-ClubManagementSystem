@@ -18,8 +18,8 @@
             @Localizer["Statistics"]
         </MudNavLink>
         <AuthorizeView Roles="@Roles.Admin">
-            <MudNavLink Href="accounts" Match="NavLinkMatch.Prefix" Icon="@Icons.Filled.ManageAccounts">
-                @Localizer["Accounts"]
+            <MudNavLink Href="user-management" Match="NavLinkMatch.Prefix" Icon="@Icons.Filled.ManageAccounts">
+                @Localizer["Users"]
             </MudNavLink>
         </AuthorizeView>
     </MudNavMenu>

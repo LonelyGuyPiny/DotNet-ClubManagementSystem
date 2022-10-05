@@ -3,19 +3,28 @@
         <MudForm @ref="_form" Class="px-2">
             <MudSelect T="string"
                        Label="Roles"
-                       MultiSelection="true"
+                       MultiSelection="SelectMultipleRoles"
                        AnchorOrigin="Origin.BottomCenter"
                        @bind-SelectedValues="Roles">
-                <MudSelectItem Value="@("Administrator")" />
+                @foreach (var role in ClubManagementSystem.Roles.List)
+                {
+                    <MudSelectItem Value="@role" />
+                }
             </MudSelect>
         </MudForm>
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Secondary" Variant="Variant.Filled" Size="Size.Small" OnClick="Cancel">
+        <MudButton Color="Color.Secondary"
+                   Variant="Variant.Filled"
+                   Size="Size.Small"
+                   OnClick="Cancel">
             Cancel
         </MudButton>
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" OnClick="Submit">
-            Submit
+        <MudButton Color="Color.Primary"
+                   Variant="Variant.Filled"
+                   Size="Size.Small"
+                   OnClick="Submit">
+            Save
         </MudButton>
     </DialogActions>
 </MudDialog>
@@ -28,6 +37,9 @@
 
     [Parameter]
     public IEnumerable<string> Roles { get; set; } = null!;
+
+    [Parameter]
+    public bool SelectMultipleRoles { get; set; }
 
     private async Task Submit()
     {

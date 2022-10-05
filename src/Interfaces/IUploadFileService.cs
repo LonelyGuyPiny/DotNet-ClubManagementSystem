@@ -1,4 +1,4 @@
-﻿using ClubManagementSystem.Enums;
+﻿using ClubManagementSystem.Models;
 
 namespace ClubManagementSystem.Interfaces
 {

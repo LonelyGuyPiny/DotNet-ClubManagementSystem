@@ -1,19 +1,24 @@
 ﻿using ClubManagementSystem.Data.Entities;
+using ClubManagementSystem.Extensions;
 using ClubManagementSystem.Resources;
 using ClubManagementSystem.Shared;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
 using static ClubManagementSystem.Areas.Identity.Pages.Account.RegisterModel;
 
-namespace ClubManagementSystem.Pages.Accounts
+namespace ClubManagementSystem.Pages.UserManagement
 {
-    public class AccountsBase : ComponentBase
+    public class UserManagementBase : ComponentBase
     {
         [Inject]
         private UserManager<User> _userManager { get; set; } = null!;
+
+        [CascadingParameter]
+        private Task<AuthenticationState> _authStateTask { get; set; } = null!;
 
         [Inject]
         private IDialogService _dialogService { get; set; } = null!;
@@ -27,11 +32,14 @@ namespace ClubManagementSystem.Pages.Accounts
         protected List<User> Users { get; set; } = new();
         protected string? SearchQuery { get; set; }
         protected bool IsLoading { get; set; }
+        protected string CurrentUserId { get; set; } = null!;
 
         private async Task LoadUsers()
         {
             IsLoading = true;
             Users = await _userManager.Users.ToListAsync();
+            var authState = await _authStateTask;
+            CurrentUserId = authState.User.GetId()!;
             IsLoading = false;
         }
 
@@ -54,21 +62,21 @@ namespace ClubManagementSystem.Pages.Accounts
             return false;
         }
 
-        protected async Task CreateUser()
+        protected async Task CreateNewUser()
         {
-            var result = await _dialogService.Show<CreateAccount>("Create Account").Result;
+            var result = await _dialogService.Show<CreateNewUser>("Create New User").Result;
 
             if (!result.Cancelled)
             {
-                var userAccount = (CreateUserAccount)result.Data;
+                var userData = (UserDto)result.Data;
                 var user = new User
                 {
-                    FirstName = userAccount.FirstName,
-                    LastName = userAccount.LastName,
-                    Email = userAccount.Email,
-                    UserName = userAccount.Email
+                    FirstName = userData.FirstName,
+                    LastName = userData.LastName,
+                    Email = userData.Email,
+                    UserName = userData.Email
                 };
-                var identityResult = await _userManager.CreateAsync(user, userAccount.Password);
+                var identityResult = await _userManager.CreateAsync(user, userData.Password);
                 if (identityResult.Succeeded)
                 {
                     _snackbar.Add(string.Format(Messages.SuccessfulCreationFormat, user.FirstName),
@@ -86,7 +94,11 @@ namespace ClubManagementSystem.Pages.Accounts
         protected async Task AddToRoles(User user)
         {
             var currentRoles = await _userManager.GetRolesAsync(user);
-            var dialogParams = new DialogParameters { ["roles"] = currentRoles };
+            var dialogParams = new DialogParameters 
+            {
+                ["roles"] = currentRoles,
+                ["selectMultipleRoles"] = true
+            };
             var result = await _dialogService.Show<AddToRoles>("Add to Roles", dialogParams).Result;
 
             if (!result.Cancelled)

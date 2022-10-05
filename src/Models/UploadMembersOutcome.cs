@@ -1,4 +1,4 @@
-﻿namespace ClubManagementSystem.Enums
+﻿namespace ClubManagementSystem.Models
 {
     public enum UploadMembersOutcome
     {

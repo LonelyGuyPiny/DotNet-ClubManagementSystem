@@ -1,7 +1,7 @@
 ﻿using ClubManagementSystem.Data;
 using ClubManagementSystem.Data.Entities;
-using ClubManagementSystem.Enums;
 using ClubManagementSystem.Interfaces;
+using ClubManagementSystem.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Text;
@@ -77,7 +77,6 @@ namespace ClubManagementSystem.Services
                     return (UploadMembersOutcome.InsertFailed, null);
                 }
             }
-                
 
             return (UploadMembersOutcome.Success, newMembers.Count);
         }

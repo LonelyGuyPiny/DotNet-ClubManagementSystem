@@ -11,7 +11,7 @@ namespace ClubManagementSystem.Shared
         protected MudThemeProvider MudThemeProvider { get; set; } = null!;
         protected DefaultTheme DefaultTheme { get; set; } = new();
         protected bool IsDrawerOpened { get; set; }
-        protected bool IsDarkMode { get; set;}
+        protected bool IsDarkMode { get; set; }
 
         [Inject]
         protected IStringLocalizer<Common> Localizer { get; set; } = null!;

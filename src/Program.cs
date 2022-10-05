@@ -15,7 +15,7 @@ var config = builder.Configuration;
 builder.Services.AddDbContextFactory<AppDbContext>(options =>
 {
     options
-        .UseSqlServer(config.GetConnectionString("ClubManagementSystemConnection"))
+        .UseSqlServer(config.GetConnectionString("Default"))
         .EnableSensitiveDataLogging();
 });
 #else
@@ -36,7 +36,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddLocalization();
 
 //builder.Services.AddHostedService<MembershipNotificationService>();
-
+builder.Services.AddTransient<UserManager<User>>();
 builder.Services.AddTransient<IMemberService, MemberService>();
 builder.Services.AddTransient<IMembershipService, MembershipService>();
 builder.Services.AddTransient<IUploadFileService, UploadFileService>();
@@ -71,5 +71,7 @@ app.UseRequestLocalization(localizationOptions);
 app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+
+await DbInitializer.ApplyMigrationsAndSeedData(app.Services);
 
 app.Run();

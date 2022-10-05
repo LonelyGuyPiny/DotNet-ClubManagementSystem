@@ -1,5 +1,5 @@
-﻿using ClubManagementSystem.Enums;
-using ClubManagementSystem.Interfaces;
+﻿using ClubManagementSystem.Interfaces;
+using ClubManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
