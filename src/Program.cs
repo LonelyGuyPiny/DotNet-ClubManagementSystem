@@ -14,19 +14,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContextFactory<AppDbContext>(options =>
 {
     var envVar = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+    var conStr = builder.Configuration.GetConnectionString("Default");
     if (envVar == "Production")
     {
         //postgres://<username>:<password>@<host>/<dbname>
         //Host=my_host;Database=my_db;Username=my_user;Password=my_pw
-        var m = Regex.Match(Environment.GetEnvironmentVariable("DATABASE_URL")!, @"postgres://(.+):(\w+)@(.+)/(.+)");
-        var conStr = $"Host={m.Groups[3]};Database={m.Groups[4]};Username={m.Groups[1]};Password={m.Groups[2]};";
-        Console.WriteLine(conStr);
-        options.UseNpgsql(conStr);
-    }   
-    else 
-    {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
-    }   
+        var matches = Regex.Match(Environment.GetEnvironmentVariable("DATABASE_URL")!, @"postgres://(.+):(\w+)@(.+)/(.+)");
+        conStr = $"Host={matches.Groups[3]};Database={matches.Groups[4]};Username={matches.Groups[1]};Password={matches.Groups[2]};";
+
+    } 
+    //else 
+    //{
+    //    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
+    //}
+    //
+    options.UseNpgsql(conStr);
 });
 
 builder.Services.AddDefaultIdentity<User>()
