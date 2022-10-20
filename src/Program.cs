@@ -20,7 +20,7 @@ builder.Services.AddDbContextFactory<AppDbContext>(options =>
         //Host=my_host;Database=my_db;Username=my_user;Password=my_pw
         var m = Regex.Match(envVar, @"postgres://(.+):(\w+)@(.+)/(.+)");
         var conStr = $"Host={m.Groups[3]};Database={m.Groups[4]};Username={m.Groups[1]};Password={m.Groups[2]};";
-
+        Console.WriteLine(conStr);
         options.UseNpgsql(conStr);
     }   
     else 
