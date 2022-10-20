@@ -7,36 +7,21 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
+using System.Text.RegularExpressions;
 
 var builder = WebApplication.CreateBuilder(args);
-var config = builder.Configuration;
-
-var connectionString = string.Empty;
-
-if (builder.Environment.EnvironmentName == "Development")
-{
-    connectionString = config.GetConnectionString("Default");
-}
-else
-{
-    // Use connection string provided at runtime by Heroku.
-    var dbUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-
-    dbUrl = dbUrl!.Replace("postgres://", string.Empty);
-    var userPassSide = dbUrl.Split("@")[0];
-    var hostSide = dbUrl.Split("@")[1];
-
-    var user = userPassSide.Split(":")[0];
-    var password = userPassSide.Split(":")[1];
-    var host = hostSide.Split("/")[0];
-    var database = hostSide.Split("/")[1].Split("?")[0];
-
-    connectionString = $"Host={host};Database={database};Username={user};Password={password};SSL Mode=Require;Trust Server Certificate=true";
-}
 
 builder.Services.AddDbContextFactory<AppDbContext>(options =>
 {
-    options.UseSqlServer(connectionString);
+    if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
+    {
+        var m = Regex.Match(Environment.GetEnvironmentVariable("DATABASE_URL")!, @"postgres://(.*):(.*)@(.*):(.*)/(.*)");
+        options.UseNpgsql($"Server={m.Groups[3]};Port={m.Groups[4]};User Id={m.Groups[1]};Password={m.Groups[2]};Database={m.Groups[5]};sslmode=Prefer;Trust Server Certificate=true");
+    }
+    else 
+    {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
+    }   
 });
 
 builder.Services.AddDefaultIdentity<User>()

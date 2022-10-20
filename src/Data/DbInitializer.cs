@@ -18,7 +18,7 @@ namespace ClubManagementSystem.Data
                 var userManager = services.GetRequiredService<UserManager<User>>();
                 var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-                await dbContext.Database.MigrateAsync();
+                //await dbContext.Database.MigrateAsync();
 
                 await CreateRoles(roleManager);
                 await CreateAdminUser(userManager);
