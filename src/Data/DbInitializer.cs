@@ -14,7 +14,7 @@ namespace ClubManagementSystem.Data
             using (var scope = serviceProvider.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                var dbContext = services.GetRequiredService<AppDbContext>();
+                //var dbContext = services.GetRequiredService<AppDbContext>();
                 var userManager = services.GetRequiredService<UserManager<User>>();
                 var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
