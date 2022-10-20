@@ -15,10 +15,11 @@ namespace ClubManagementSystem.Data
             {
                 var services = scope.ServiceProvider;
                 var dbContext = services.GetRequiredService<AppDbContext>();
+
+                dbContext.Database.Migrate();
+
                 var userManager = services.GetRequiredService<UserManager<User>>();
                 var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-
-                await dbContext.Database.MigrateAsync();
 
                 await CreateRoles(roleManager);
                 await CreateAdminUser(userManager);
