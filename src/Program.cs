@@ -7,16 +7,26 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
-using System.Text.RegularExpressions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContextFactory<AppDbContext>(options =>
 {
-    if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
+    var envVar = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+    if (envVar == "Production")
     {
-        var m = Regex.Match(Environment.GetEnvironmentVariable("DATABASE_URL")!, @"postgres://(.*):(.*)@(.*):(.*)/(.*)");
-        options.UseNpgsql($"Server={m.Groups[3]};Port={m.Groups[4]};User Id={m.Groups[1]};Password={m.Groups[2]};Database={m.Groups[5]};sslmode=Prefer;Trust Server Certificate=true");
+        var uri = new Uri(envVar);
+
+        var username = uri.UserInfo.Split(':')[0];
+        var password = uri.UserInfo.Split(':')[1];
+    
+        var connectionString =
+        "; Database=" + uri.AbsolutePath.Substring(1) +
+        "; Username=" + username +
+        "; Password=" + password +
+        "; Port=" + uri.Port +
+        "; SSL Mode=Require; Trust Server Certificate=true;";
+        options.UseNpgsql(connectionString);
     }
     else 
     {
