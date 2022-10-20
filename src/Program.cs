@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContextFactory<AppDbContext>(options =>
 {
-    if (builder.Environment.IsEnvironment("ASPNETCORE_ENVIRONMENT"))
+    if (builder.Environment.IsEnvironment("Production"))
     {
         var matches = Regex.Match(Environment.GetEnvironmentVariable("DATABASE_URL")!, @"postgres://(.+):(\w+)@(.+)/(.+)");
         var conStr = $"Host={matches.Groups[3]};Database={matches.Groups[4]};Username={matches.Groups[1]};Password={matches.Groups[2]};";
@@ -24,8 +24,6 @@ builder.Services.AddDbContextFactory<AppDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
                 providerOptions => providerOptions.EnableRetryOnFailure());
     }
-
-    
 }); 
 
 builder.Services.AddDefaultIdentity<User>()
