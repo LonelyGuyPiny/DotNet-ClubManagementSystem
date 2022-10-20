@@ -15,20 +15,23 @@ namespace ClubManagementSystem.Data
             {
                 var services = scope.ServiceProvider;
                 var dbContext = services.GetRequiredService<AppDbContext>();
-
-                await dbContext.Database.MigrateAsync();
-
                 var userManager = services.GetRequiredService<UserManager<User>>();
                 var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
                 try
                 {
-                    await CreateRoles(roleManager);
+                    await dbContext.Database.MigrateAsync();
+
+                    if (!await roleManager.RoleExistsAsync(Roles.Admin))
+                    {
+                        await roleManager.CreateAsync(new IdentityRole { Name = Roles.Admin });
+                    }
+
                     await CreateAdminUser(userManager);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Console.WriteLine(e.Message);
                 }
             }
         }
@@ -49,15 +52,6 @@ namespace ClubManagementSystem.Data
             }
             if (!await userManager.IsInRoleAsync(admin, Roles.Admin))
                 await userManager.AddToRoleAsync(admin, Roles.Admin);
-        }
-
-        private static async Task CreateRoles(RoleManager<IdentityRole> roleManager)
-        {
-            foreach (var role in Roles.List)
-            {
-                if (!await roleManager.RoleExistsAsync(role))
-                    await roleManager.CreateAsync(new IdentityRole { Name = role });
-            }
         }
     }
 }

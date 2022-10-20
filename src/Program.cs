@@ -13,23 +13,20 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContextFactory<AppDbContext>(options =>
 {
-    var envVar = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-    var conStr = builder.Configuration.GetConnectionString("Default");
-    if (envVar == "Production")
+    if (builder.Environment.IsEnvironment("ASPNETCORE_ENVIRONMENT"))
     {
-        //postgres://<username>:<password>@<host>/<dbname>
-        //Host=my_host;Database=my_db;Username=my_user;Password=my_pw
         var matches = Regex.Match(Environment.GetEnvironmentVariable("DATABASE_URL")!, @"postgres://(.+):(\w+)@(.+)/(.+)");
-        conStr = $"Host={matches.Groups[3]};Database={matches.Groups[4]};Username={matches.Groups[1]};Password={matches.Groups[2]};";
+        var conStr = $"Host={matches.Groups[3]};Database={matches.Groups[4]};Username={matches.Groups[1]};Password={matches.Groups[2]};";
+        options.UseNpgsql(conStr);
+    }
+    else
+    {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
+                providerOptions => providerOptions.EnableRetryOnFailure());
+    }
 
-    } 
-    //else 
-    //{
-    //    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
-    //}
-    //
-    options.UseNpgsql(conStr);
-});
+    
+}); 
 
 builder.Services.AddDefaultIdentity<User>()
                 .AddRoles<IdentityRole>()
@@ -49,6 +46,10 @@ builder.Services.AddTransient<IUploadFileService, UploadFileService>();
 
 builder.Services.AddScoped<AuthenticationStateProvider,
     RevalidatingIdentityAuthenticationStateProvider<User>>();
+
+builder.Logging.AddFile("Logs/log-{Date}.txt", LogLevel.Information,
+    new Dictionary<string, LogLevel>
+    { {"Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Error } });
 
 var app = builder.Build();
 
