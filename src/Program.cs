@@ -11,19 +11,33 @@ using MudBlazor.Services;
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
-#if DEBUG
+var connectionString = string.Empty;
+
+if (builder.Environment.EnvironmentName == "Development")
+{
+    connectionString = config.GetConnectionString("Default");
+}
+else
+{
+    // Use connection string provided at runtime by Heroku.
+    var dbUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+    dbUrl = dbUrl!.Replace("postgres://", string.Empty);
+    var userPassSide = dbUrl.Split("@")[0];
+    var hostSide = dbUrl.Split("@")[1];
+
+    var user = userPassSide.Split(":")[0];
+    var password = userPassSide.Split(":")[1];
+    var host = hostSide.Split("/")[0];
+    var database = hostSide.Split("/")[1].Split("?")[0];
+
+    connectionString = $"Host={host};Database={database};Username={user};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+}
+
 builder.Services.AddDbContextFactory<AppDbContext>(options =>
 {
-    options
-        .UseSqlServer(config.GetConnectionString("Default"))
-        .EnableSensitiveDataLogging();
+    options.UseSqlServer(connectionString);
 });
-#else
-builder.Services.AddDbContextFactory<AppDbContext>(options =>
-{
-    options.UseSqlServer(config.GetConnectionString("ClubManagementSystemConnection"));
-});
-#endif
 
 builder.Services.AddDefaultIdentity<User>()
                 .AddRoles<IdentityRole>()
