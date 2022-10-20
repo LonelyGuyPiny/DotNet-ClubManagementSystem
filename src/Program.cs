@@ -15,10 +15,12 @@ builder.Services.AddDbContextFactory<AppDbContext>(options =>
 {
     var envVar = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
     if (envVar == "Production")
-    {   
+    {
         //postgres://<username>:<password>@<host>/<dbname>
+        //Host=my_host;Database=my_db;Username=my_user;Password=my_pw
         var m = Regex.Match(envVar, @"postgres://(.+):(\w+)@(.+)/(.+)");
-        var conStr = $"Server={m.Groups[3]};User Id={m.Groups[1]};Password={m.Groups[2]};Database={m.Groups[4]};sslmode=Prefer;Trust Server Certificate=true";
+        var conStr = $"Host={m.Groups[3]};Database={m.Groups[4]};Username={m.Groups[1]};Password={m.Groups[2]};";
+
         options.UseNpgsql(conStr);
     }   
     else 
