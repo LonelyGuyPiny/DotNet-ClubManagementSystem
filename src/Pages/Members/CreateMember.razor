@@ -62,7 +62,7 @@
 </MudDialog>
 
 @code {
-    private MudForm _form = null!;
+    private MudForm? _form = new();
     private Member _member = new();
     private bool _showMembershipDetails = false;
     private DateRange _membershipPeriod = new DateRange(DateTime.Now, DateTime.Now.AddMonths(1));
@@ -72,7 +72,7 @@
 
     private async Task Submit()
     {
-        await _form.Validate();
+        await _form!.Validate();
         if (_form.IsValid)
         {
             _mudDialog.Close(DialogResult.Ok(_member));

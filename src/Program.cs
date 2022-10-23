@@ -11,6 +11,8 @@ using System.Text.RegularExpressions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 builder.Services.AddDbContextFactory<AppDbContext>(options =>
 {
     var conStr = builder.Configuration.GetConnectionString("Default");
@@ -20,6 +22,7 @@ builder.Services.AddDbContextFactory<AppDbContext>(options =>
         var matches = Regex.Match(Environment.GetEnvironmentVariable("DATABASE_URL")!, @"postgres://(.+):(\w+)@(.+)/(.+)");
         conStr = $"Host={matches.Groups[3]};Database={matches.Groups[4]};Username={matches.Groups[1]};Password={matches.Groups[2]};";
     }
+
     options.UseNpgsql(conStr);
     //else
     //{
