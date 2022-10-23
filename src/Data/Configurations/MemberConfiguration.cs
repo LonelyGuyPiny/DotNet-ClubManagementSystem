@@ -13,9 +13,6 @@ namespace ClubManagementSystem.Data.Configurations
             builder
                 .Property(p => p.Gender)
                 .HasConversion<string>();
-            builder
-                .Property(p => p.BirthDate)
-                .HasColumnType("date");
         }
     }
 }
