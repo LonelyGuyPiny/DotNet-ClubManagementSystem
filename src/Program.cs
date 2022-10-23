@@ -13,18 +13,20 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContextFactory<AppDbContext>(options =>
 {
+    var conStr = builder.Configuration.GetConnectionString("Default");
     if (builder.Environment.IsEnvironment("Production"))
     {
+        //postgres://:@/
         var matches = Regex.Match(Environment.GetEnvironmentVariable("DATABASE_URL")!, @"postgres://(.+):(\w+)@(.+)/(.+)");
-        var conStr = $"Host={matches.Groups[3]};Database={matches.Groups[4]};Username={matches.Groups[1]};Password={matches.Groups[2]};";
-        options.UseNpgsql(conStr);
+        conStr = $"Host={matches.Groups[3]};Database={matches.Groups[4]};Username={matches.Groups[1]};Password={matches.Groups[2]};";
     }
-    else
-    {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
-                providerOptions => providerOptions.EnableRetryOnFailure());
-    }
-}); 
+    options.UseNpgsql(conStr);
+    //else
+    //{
+    //    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
+    //            providerOptions => providerOptions.EnableRetryOnFailure());
+    //}
+});
 
 builder.Services.AddDefaultIdentity<User>()
                 .AddRoles<IdentityRole>()
@@ -63,7 +65,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication();;
+app.UseAuthentication(); ;
 app.UseAuthorization();
 
 var supportedCultures = new[] { "en-US", "bg-BG" };
