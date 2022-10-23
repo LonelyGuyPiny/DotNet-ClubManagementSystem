@@ -27,7 +27,7 @@ namespace ClubManagementSystem.Data
                         await roleManager.CreateAsync(new IdentityRole { Name = Roles.Admin });
                     }
 
-                    await CreateAdminUser(userManager);
+                    //await CreateAdminUser(userManager);
                 }
                 catch (Exception e)
                 {
